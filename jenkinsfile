@@ -1,0 +1,29 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                echo 'Source code checked out from GitHub'
+            }
+        }
+
+        stage('Python Version') {
+            steps {
+                sh 'python3 --version'
+            }
+        }
+
+        stage('Run Unit Tests') {
+            steps {
+                sh 'python3 -m unittest -v'
+            }
+        }
+
+        stage('Build Success') {
+            steps {
+                echo 'All stages completed successfully!'
+            }
+        }
+    }
+}
