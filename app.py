@@ -12,3 +12,4 @@ if __name__ == "__main__":
     print("Addition:", add(10, 20))
     print("Multiplication:", multiply(5, 5))
     print("Subtraction:", subtract(50, 20))
+# Testing automatic Jenkins webhook trigger
