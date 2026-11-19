@@ -20,8 +20,15 @@ pipeline {
             }
         }
 
-        stage('Build Success') {
+        stage('Build Docker image') {
             steps {
+                sh 'docker build -t jenkins-python-app:${BUILD_NUMBER} .'
+            }
+        }
+        stage('Run Docker Container') {
+            steps {
+                sh 'docker run --rm jenkins-python-app:${BUILD_NUMBER}'
+            }
                 echo 'All stages completed successfully!'
             }
         }
