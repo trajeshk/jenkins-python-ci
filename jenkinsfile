@@ -1,3 +1,4 @@
+
 pipeline {
     agent any
 
@@ -20,15 +21,46 @@ pipeline {
             }
         }
 
-        stage('Build Docker image') {
+        stage('Build Docker Image') {
             steps {
-                sh 'docker build -t jenkins-python-app:${BUILD_NUMBER} .'
+                sh '''
+                    docker build \
+                    -t trajeshk/jenkins-python-app:${BUILD_NUMBER} \
+                    -t trajeshk/jenkins-python-app:latest .
+                '''
             }
         }
+
+        stage('Push to Docker Hub') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-credentials',
+                    usernameVariable: 'DOCKERHUB_USERNAME',
+                    passwordVariable: 'DOCKERHUB_TOKEN'
+                )]) {
+                    sh '''
+                        set +x
+                        set -e
+                        echo "$DOCKERHUB_TOKEN" | docker login \
+                            -u "$DOCKERHUB_USERNAME" --password-stdin
+
+                        docker push trajeshk/jenkins-python-app:${BUILD_NUMBER}
+                        docker push trajeshk/jenkins-python-app:latest
+
+                        docker logout
+                    '''
+                }
+            }
+        }
+
         stage('Run Docker Container') {
             steps {
-                sh 'docker run --rm jenkins-python-app:${BUILD_NUMBER}'
+                sh 'docker run --rm trajeshk/jenkins-python-app:${BUILD_NUMBER}'
             }
+        }
+
+        stage('Build Success') {
+            steps {
                 echo 'All stages completed successfully!'
             }
         }
