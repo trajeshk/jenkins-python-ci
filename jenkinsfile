@@ -58,6 +58,19 @@ pipeline {
             }
         }
 
+        stage('Deploy Application') {
+            steps {
+                sh '''
+                   docker rm -f jenkins-python-app || true
+                   docker pull trajeshk/jenkins-python-app:latest
+                   docker run -d \
+                      --name jenkins-python-app \
+                      trajeshk/jenkins-python-app:latest
+                  docker ps -a
+              '''
+	    }
+        }
+
         stage('Build Success') {
             steps {
                 echo 'All stages completed successfully!'
